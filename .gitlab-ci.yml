@@ -19,6 +19,19 @@ test:
   stage: test
   script:
     - echo "This is a test step"
+      bundler-audit:
+    runs-on: ubuntu-20.04
+    needs: test
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: docker run --rm -v $(pwd):/src -w /src hysnsec/bundle-audit check --format json --output bundle-audit-output.json
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: bundler-audit
+          path: bundle-audit-output.json
+        if: always()                        # what is this for?
 
 integration:
   stage: integration
